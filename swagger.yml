@@ -39,3 +39,30 @@ paths:
                   type: number
                 inventory_count:
                   type: integer
+  /product/{itemname}:
+    get:
+      operationId: shop.find_one_item
+      tags:
+        - Browsing
+      summary: Get a single item by name
+      description: >
+        Get the details of one item, given a matching name. If the name doesn't appear
+        among shop items, panic. Try passing in `Turtle dove` or `Chachalaca`, then try
+        passing in `asdf`.
+      parameters:
+        - name: itemname
+          description: Find an item in the shop with this name.
+          in: path
+          type: string
+          required: True
+      responses:
+        200:
+          description: Successfully got details of one product.
+          schema:
+            properties:
+              title:
+                type: string
+              price:
+                type: number
+              inventory_count:
+                type: integer

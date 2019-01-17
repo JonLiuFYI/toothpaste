@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
 from decimal import *
+from flask import make_response, abort
 
-# this would be in a database
+# this would be from a database
 fake_db = [
     {
         'title': "French hen",
@@ -42,3 +43,18 @@ def list_items(in_stock_only=False):
     return sorted([k for k in ITEMS
                    if (k['inventory_count'] > 0 if in_stock_only else True)],
                   key=lambda i: i['title'])
+
+
+def find_one_item(itemname):
+    """
+    GET the one item in the shop whose title matches itemname.
+
+    :param itemname: The title to look for in the shop.
+    :type itemname: str
+    :return: dict(str, Decimal, int). A dict representing the requested item.
+    :raise: werkzeug.exceptions.NotFound
+    """
+    try:
+        return [i for i in ITEMS if i['title'] == itemname][0]
+    except IndexError:
+        abort(404, "There's no product named {}!".format(itemname))
