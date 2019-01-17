@@ -39,8 +39,6 @@ def list_items(in_stock_only=False):
     :type in_stock_only: bool
     :return: List of dicts. All products, sorted by title.
     """
-    if in_stock_only:
-        return sorted([ITEMS[k] for k in ITEMS.keys() if ITEMS[k]['inventory_count'] > 0],
-                      key=lambda i: i['title'])
-
-    return sorted([ITEMS[k] for k in ITEMS.keys()], key=lambda i: i['title'])
+    return sorted([ITEMS[k] for k in ITEMS.keys()
+                   if (ITEMS[k]['inventory_count'] > 0 if in_stock_only else True)],
+                  key=lambda i: i['title'])
