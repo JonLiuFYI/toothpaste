@@ -28,7 +28,7 @@ fake_db = [
 ]
 
 # may be changed externally to set up for unit tests
-ITEMS = fake_db
+SHOP = fake_db
 
 
 def list_items(in_stock_only=False):
@@ -40,7 +40,7 @@ def list_items(in_stock_only=False):
     :type in_stock_only: bool
     :return: List of dicts. All products, sorted by title.
     """
-    return sorted([k for k in ITEMS
+    return sorted([k for k in SHOP
                    if (k['inventory_count'] > 0 if in_stock_only else True)],
                   key=lambda i: i['title'])
 
@@ -55,7 +55,7 @@ def find_one_item(itemname):
     :raise: werkzeug.exceptions.NotFound
     """
     try:
-        return [i for i in ITEMS if i['title'] == itemname][0]
+        return [i for i in SHOP if i['title'] == itemname][0]
     except IndexError:
         abort(404, "There's no product named {}!".format(itemname))
 
@@ -71,7 +71,7 @@ def buy(itemname):
             werkzeug.exceptions.NotAcceptable
     """
     try:
-        item = [i for i in ITEMS if i['title'] == itemname][0]
+        item = [i for i in SHOP if i['title'] == itemname][0]
         if item['inventory_count'] == 0:
             raise ValueError
         item['inventory_count'] -= 1
