@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  description: Hypothetical shopping backend
+  description: Hypothetical shopping backend. Try the demos included on this page!
   version: "0.1"
   title: Toothpaste API
 consumes:
@@ -66,3 +66,27 @@ paths:
                 type: number
               inventory_count:
                 type: integer
+  /buy/{itemname}:
+    put:
+      operationId: shop.buy
+      tags:
+        - Purchasing
+      summary: Buy the named item
+      description: >
+        Attempt to buy the item with the matching name, reducing its quantity by 1. Get a
+        404 if there's no such item and a 406 if the item's quantity is insufficient. Try
+        passing in `Turtle dove` or `Chachalaca`, then try passing in `asdf`. Try buying
+        an item until it's out of stock.
+      parameters:
+        - name: itemname
+          description: Find and buy the shop item with this name. Its stock goes down by 1.
+          in: path
+          type: string
+          required: True
+      responses:
+        200:
+          description: Successfully found and purchased the named product. Return its price.
+          schema:
+            properties:
+              price:
+                type: number

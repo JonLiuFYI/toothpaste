@@ -58,3 +58,25 @@ def find_one_item(itemname):
         return [i for i in ITEMS if i['title'] == itemname][0]
     except IndexError:
         abort(404, "There's no product named {}!".format(itemname))
+
+def buy(itemname):
+    """
+    Find the item whose title matches itemname. If it's in stock, PUT the new
+    inventory_count, reduced by 1.
+
+    :param itemname: The title to look for in the shop, then buy.
+    :type itemname: str
+    :return: Decimal. The cost to be charged for the purchased item.
+    :raise: werkzeug.exceptions.NotFound
+            werkzeug.exceptions.NotAcceptable
+    """
+    try:
+        item = [i for i in ITEMS if i['title'] == itemname][0]
+        if item['inventory_count'] == 0:
+            raise ValueError
+        item['inventory_count'] -= 1
+        return item['price']
+    except IndexError:
+        abort(404, "There's no product named {}!".format(itemname))
+    except ValueError:
+        abort(406, "{} is out of stock!".format(itemname))

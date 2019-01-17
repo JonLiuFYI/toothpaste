@@ -3,7 +3,7 @@
 from decimal import *
 import shop
 import pytest
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, NotAcceptable
 
 ITEM_TEST_1 = [
     {
@@ -82,3 +82,20 @@ class TestFindOneItem:
         shop.ITEMS = ITEM_TEST_1
         with pytest.raises(NotFound):
             shop.find_one_item("Noisy crow")
+
+class TestBuy:
+    def test_buy_ok(self):
+        shop.ITEMS = ITEM_TEST_1
+        assert shop.buy("Partridge in a pear tree") == Decimal('9.99')
+        assert shop.ITEMS[1]['inventory_count'] == 0
+
+    def test_buy_sold_out(self):
+        shop.ITEMS = ITEM_TEST_1
+        with pytest.raises(NotAcceptable):
+            shop.buy("Chachalaca")
+            assert shop.ITEMS[2]['inventory_count'] == 0
+
+    def test_buy_doesnt_exist(self):
+        shop.ITEMS = ITEM_TEST_1
+        with pytest.raises(NotFound):
+            shop.buy("Noisy crow")
