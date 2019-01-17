@@ -1,0 +1,41 @@
+swagger: "2.0"
+info:
+  description: Hypothetical shopping backend
+  version: "0.1"
+  title: Toothpaste API
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /api
+
+paths:
+  /shop:
+    get:
+      operationId: shop.list_items
+      tags:
+        - Browsing
+      summary: Get a list of all items
+      description: >
+        Get the list of all items in the shop, sorted by title. If `in_stock_only` is `True`,
+        get only items that are in stock. If `False` or not passed, get everything.
+      parameters:
+        - name: in_stock_only
+          description: Request only in-stock items if True.
+          in: query
+          type: boolean
+          required: False
+      responses:
+        200:
+          description: Successfully got the list of items.
+          schema:
+            type: array
+            items:
+              properties:
+                title:
+                  type: string
+                price:
+                  type: number
+                inventory_count:
+                  type: integer
