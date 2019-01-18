@@ -46,9 +46,9 @@ paths:
         - Browsing
       summary: Get a single item by name
       description: >
-        Get the details of one item, given a matching name. If the name doesn't appear
-        among shop items, panic. Try passing in `Turtle dove` or `Chachalaca`, then try
-        passing in `asdf`.
+        Get the details of one item, given a matching name. Get a 404 if the name
+        doesn't appear among shop items. Try passing in `Turtle dove` or `Chachalaca`,
+        then try passing in `asdf`.
       parameters:
         - name: itemname
           description: Find an item in the shop with this name.

@@ -2,10 +2,11 @@
 
 from decimal import *
 import shop
+from Item_Shop_classes import Shop, Item
 import pytest
 from werkzeug.exceptions import NotFound, NotAcceptable
 
-ITEM_TEST_1 = [
+ITEM_TEST_1 = Shop([
     {
         'title': "Turtle dove",
         'price': Decimal('12.25'),
@@ -21,12 +22,12 @@ ITEM_TEST_1 = [
         'price': Decimal('3.50'),
         'inventory_count': 0
     }
-]
+])
 
 
 class TestListItems:
     def test_request_all_items(self):
-        shop.SHOP = ITEM_TEST_1
+        shop.MY_SHOP = ITEM_TEST_1
         assert shop.list_items() == [
             {
                 'title': "Chachalaca",
@@ -46,7 +47,7 @@ class TestListItems:
         ]
 
     def test_request_in_stock_items(self):
-        shop.SHOP = ITEM_TEST_1
+        shop.MY_SHOP = ITEM_TEST_1
         assert shop.list_items(in_stock_only=True) == [
             {
                 'title': "Partridge in a pear tree",
@@ -61,17 +62,17 @@ class TestListItems:
         ]
 
     def test_request_all_empty_store(self):
-        shop.SHOP = dict()
+        shop.MY_SHOP = Shop([])
         assert shop.list_items() == []
 
     def test_request_in_stock_empty_store(self):
-        shop.SHOP = dict()
+        shop.MY_SHOP = Shop([])
         assert shop.list_items(in_stock_only=True) == []
 
 
 class TestFindOneItem:
     def test_itemname_exists(self):
-        shop.SHOP = ITEM_TEST_1
+        shop.MY_SHOP = ITEM_TEST_1
         assert shop.find_one_item("Turtle dove") == {
             'title': "Turtle dove",
             'price': Decimal('12.25'),
@@ -79,23 +80,24 @@ class TestFindOneItem:
         }
 
     def test_itemname_doesnt_exist(self):
-        shop.SHOP = ITEM_TEST_1
+        shop.MY_SHOP = ITEM_TEST_1
         with pytest.raises(NotFound):
             shop.find_one_item("Noisy crow")
 
+
 class TestBuy:
     def test_buy_ok(self):
-        shop.SHOP = ITEM_TEST_1
+        shop.MY_SHOP = ITEM_TEST_1
         assert shop.buy("Partridge in a pear tree") == Decimal('9.99')
-        assert shop.SHOP[1]['inventory_count'] == 0
+        assert shop.MY_SHOP[1].inventory_count == 0
 
     def test_buy_sold_out(self):
-        shop.SHOP = ITEM_TEST_1
+        shop.MY_SHOP = ITEM_TEST_1
         with pytest.raises(NotAcceptable):
             shop.buy("Chachalaca")
-            assert shop.SHOP[2]['inventory_count'] == 0
+            assert shop.MY_SHOP[2].inventory_count == 0
 
     def test_buy_doesnt_exist(self):
-        shop.SHOP = ITEM_TEST_1
+        shop.MY_SHOP = ITEM_TEST_1
         with pytest.raises(NotFound):
             shop.buy("Noisy crow")

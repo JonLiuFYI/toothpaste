@@ -2,6 +2,7 @@
 
 from decimal import *
 from flask import make_response, abort
+from Item_Shop_classes import Shop, Item
 
 # this would be from a database
 fake_db = [
@@ -28,7 +29,7 @@ fake_db = [
 ]
 
 # may be changed externally to set up for unit tests
-SHOP = fake_db
+MY_SHOP = Shop(fake_db)
 
 
 def list_items(in_stock_only=False):
@@ -40,9 +41,7 @@ def list_items(in_stock_only=False):
     :type in_stock_only: bool
     :return: List of dicts. All products, sorted by title.
     """
-    return sorted([k for k in SHOP
-                   if (k['inventory_count'] > 0 if in_stock_only else True)],
-                  key=lambda i: i['title'])
+    return MY_SHOP.list_of_dicts(in_stock_only)
 
 
 def find_one_item(itemname):
@@ -55,9 +54,10 @@ def find_one_item(itemname):
     :raise: werkzeug.exceptions.NotFound
     """
     try:
-        return [i for i in SHOP if i['title'] == itemname][0]
-    except IndexError:
+        return MY_SHOP.get(itemname).dict()
+    except KeyError:
         abort(404, "There's no product named {}!".format(itemname))
+
 
 def buy(itemname):
     """
@@ -71,12 +71,10 @@ def buy(itemname):
             werkzeug.exceptions.NotAcceptable
     """
     try:
-        item = [i for i in SHOP if i['title'] == itemname][0]
-        if item['inventory_count'] == 0:
-            raise ValueError
-        item['inventory_count'] -= 1
-        return item['price']
-    except IndexError:
+        item = MY_SHOP.get(itemname)
+        item.inventory_count -= 1
+        return item.price
+    except KeyError:
         abort(404, "There's no product named {}!".format(itemname))
     except ValueError:
         abort(406, "{} is out of stock!".format(itemname))
