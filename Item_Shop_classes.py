@@ -41,9 +41,15 @@ class Item:
         }
 
     def __eq__(self, other):
-        return (self.title == other.title
-                and self.price == other.price
-                and self.inventory_count == other.inventory_count)
+        if isinstance(other, Item):
+            return (self.title == other.title
+                    and self.price == other.price
+                    and self.inventory_count == other.inventory_count)
+        elif isinstance(other, dict):
+            return (self.title == other['title']
+                    and self.price == other['price']
+                    and self.inventory_count == other['inventory_count'])
+        return False
 
 
 class Shop:
@@ -92,6 +98,44 @@ class Shop:
         """
         return [i.dict() for i in self.items
                 if (i.inventory_count > 0 if in_stock_only else True)]
+
+    def __len__(self):
+        return len(self.items)
+
+    def __getitem__(self, n):
+        return self.items[n]
+
+
+class Cart:
+    """
+    Collection of Items that a user wants to buy. Internally stored as a list of dicts
+    {product, quantity}.
+    [{'product' : Item, 'quantity' : int}]
+    """
+
+    def __init__(self):
+        self.items = []
+        self.names = []
+        self.total = Decimal(0)
+
+    def add(self, item):
+        """
+        Add the given item to the Cart. If it's already in the cart, increase the
+        quantity to be purchased unless that would go over inventory_count.
+
+        :param item: The item to add
+        :type item: Item
+        :return: None
+        :raise: ValueError
+        """
+        if item.title in self.names:
+            if self.items[self.names.index(item.title)]['quantity'] == item.inventory_count:
+                raise ValueError("Can't add more than there's available")
+            self.items[self.names.index(item.title)]['quantity'] += 1
+        else:
+            self.names.append(item.title)
+            self.items.append({'product': item, 'quantity': 1})
+        self.total += item.price
 
     def __len__(self):
         return len(self.items)

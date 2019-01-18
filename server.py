@@ -4,7 +4,7 @@ from flask import render_template
 import connexion
 
 tp = connexion.App(__name__, specification_dir='./')
-tp.add_api('swagger.yml')
+tp.add_api('toothpaste.yml')
 
 
 @tp.route('/')

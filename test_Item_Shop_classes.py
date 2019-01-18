@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from decimal import *
-from Item_Shop_classes import Item, Shop
+from Item_Shop_classes import Item, Shop, Cart
 import pytest
 
 DUMMY_ITEM = {
@@ -74,7 +74,7 @@ class TestShop:
         s = Shop([])
         assert len(s) == 0
         with pytest.raises(IndexError):
-            x = s[0]
+            _ = s[0]
 
     def test_duplicate_titles(self):
         with pytest.raises(NameError):
@@ -112,3 +112,46 @@ class TestShop:
 
         s = Shop(ITEM_LIST_2)
         assert s.list_of_dicts(in_stock_only=True) == [DUMMY_ITEM]
+
+
+class TestCart:
+    def test_create_cart(self):
+        c = Cart()
+        assert len(c) == 0
+        with pytest.raises(IndexError):
+            _ = c[0]
+
+    def test_add_item_over_limit(self):
+        c = Cart()
+        i = Item(DUMMY_ITEM)
+        c.add(i)
+        assert c.items == [
+            {'product': i, 'quantity': 1}
+        ]
+        c.add(i)
+        c.add(i)
+        assert c.total == Decimal('3')
+        c.add(i)
+        with pytest.raises(ValueError):
+            c.add(i)
+
+    def test_add_multiple_items_over_limit(self):
+        c = Cart()
+        i1 = Item(DUMMY_ITEM)
+        i2 = Item({
+            'title': "Arid Mesa",
+            'price': Decimal('50.00'),
+            'inventory_count': 1
+        })
+        c.add(i2)
+        c.add(i1)
+        c.add(i1)
+        assert c.items == [
+            {'product': i2, 'quantity': 1},
+            {'product': i1, 'quantity': 2}
+        ]
+        assert c.total == Decimal('52')
+        with pytest.raises(ValueError):
+            c.add(i2)
+
+# test viewing

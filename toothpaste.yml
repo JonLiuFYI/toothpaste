@@ -96,3 +96,65 @@ paths:
           description: Purchase failed. The named product doesn't exist in the shop.
         406:
           description: Purchase failed. The named product is out of stock.
+  /cart/create/:
+    post:
+      operationId: cart.create
+      tags:
+        - Purchasing
+      summary: Create the shopping cart
+      description: >
+        Create the shopping cart unless it already exists.
+      responses:
+        201:
+          description: Successfully created the shopping cart.
+        406:
+          description: Cart creation failed. There's already a cart.
+  /cart/add/{itemname}:
+    put:
+      operationId: cart.add
+      tags:
+        - Purchasing
+      summary: Add item to shopping cart
+      description: >
+        Add the named item to the shopping cart. If the item is already there,
+        increase the quantity in the cart. Get a 404 if the item doesn't exist. Get
+        a 406 if adding the item would exceed stock.
+      parameters:
+        - name: itemname
+          description: Item to add to cart
+          in: path
+          type: string
+          required: True
+      responses:
+        200:
+          description: Successfully added the item to the shopping cart.
+        404:
+          description: Failed to add. Item doesn't exist.
+        406:
+          description: Failed to add. Not enough stock to add another to the cart.
+  /cart/view/:
+    get:
+      operationId: cart.view
+      tags:
+        - Purchasing
+      summary: View the contents of the shopping cart
+      description: >
+        See the items in the shopping cart.
+      responses:
+        200:
+          description: Successfully viewed the cart.
+          schema:
+            properties:
+              product:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  price:
+                    type: number
+                  inventory_count:
+                    type: integer
+              quantity:
+                type: integer
+        404:
+          description: Lookup failed. The cart isn't open.
