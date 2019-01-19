@@ -161,6 +161,26 @@ class Cart:
             } for i in self.items]
         }
 
+    def remove(self, itemname):
+        """
+        Reduce the quantity of the named item in the Cart by 1.
+
+        :param itemname: The item to remove
+        :type itemname: str
+        :return: None
+        :raise: NameError
+        """
+        if itemname not in self.names:
+            raise NameError("That item is not in the cart")
+
+        prodquant_pair = [i for i in self.items if i['product'].title == itemname][0]
+        prodquant_pair['quantity'] -= 1
+        self.total -= prodquant_pair['product'].price
+
+        if prodquant_pair['quantity'] == 0:
+            self.items.remove(prodquant_pair)
+            self.names.remove(itemname)
+
     def __len__(self):
         return len(self.items)
 

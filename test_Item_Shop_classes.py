@@ -189,3 +189,28 @@ class TestCart:
             'total': Decimal('0'),
             'items': []
         }
+
+    def test_remove(self):
+        c = Cart()
+        i = Item(DUMMY_ITEM)
+        c.add(i)
+        c.add(i)
+        assert c.total == Decimal('2')
+        assert c.names == ['Cup']
+        assert c.items == [{'product': i.dict(), 'quantity': 2}]
+
+        c.remove('Cup')
+        assert c.total == Decimal('1')
+        assert c.names == ['Cup']
+        assert c.items == [{'product': i.dict(), 'quantity': 1}]
+
+        c.remove('Cup')
+        assert c.total == Decimal('0')
+        assert c.names == []
+        assert c.items == []
+
+    def test_remove_not_in_cart(self):
+        c = Cart()
+        assert c.items == []
+        with pytest.raises(NameError):
+            c.remove('Cup')

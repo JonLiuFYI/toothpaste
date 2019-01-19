@@ -149,17 +149,54 @@ paths:
                 type: number
               items:
                 type: array
-                properties:
-                  product:
-                    type: object
-                    properties:
-                      title:
-                        type: string
-                      price:
-                        type: number
-                      inventory_count:
-                        type: integer
-                  quantity:
-                    type: integer
+                items:
+                  properties:
+                    product:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        price:
+                          type: number
+                        inventory_count:
+                          type: integer
+                    quantity:
+                      type: integer
         406:
           description: Lookup failed. The cart isn't open.
+  /cart/close:
+    delete:
+      operationId: cart.close_cart
+      tags:
+        - Purchasing
+      summary: Close the shopping cart
+      description: >
+        Close the shopping cart, dropping all items that were in it. Get
+        a 406 if the cart is already closed.
+      responses:
+        200:
+          description: Successfully closed the shopping cart.
+        406:
+          description: Failed to close. The cart's not open.
+  /cart/remove/{itemname}:
+    delete:
+      operationId: cart.remove_from_cart
+      tags:
+        - Purchasing
+      summary: Have 1 less of the named item in the shopping cart.
+      description: >
+        Remove 1 of the named item. Get a 404 if the item doesn't exist in the shop.
+        Get a 406 is the item isn't in the cart.
+      parameters:
+        - name: itemname
+          description: Item to remove from the cart
+          in: path
+          type: string
+          required: True
+      responses:
+        200:
+          description: Successfully reduced quantity of the item by 1.
+        404:
+          description: Failed to remove. Item doesn't exist.
+        406:
+          description: Failed to remove. Item isn't in the cart or the cart's not open.

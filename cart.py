@@ -35,7 +35,7 @@ def add_to_cart(itemname):
             werkzeug.exceptions.NotAcceptable
     """
     if my_cart is None:
-        abort(406, "The shopping cart hasn't been created yet!")
+        abort(406, "There's no shopping cart open!")
 
     try:
         item = shop.MY_SHOP.get(itemname)
@@ -61,6 +61,47 @@ def view_cart():
     :raise: werkzeug.exceptions.NotAcceptable
     """
     if my_cart is None:
-        abort(406, "The shopping cart hasn't been created yet!")
+        abort(406, "There's no shopping cart open!")
 
     return my_cart.view()
+
+
+def close_cart():
+    """
+    Close the Cart. Get a 406 if it's not even open.
+
+    :return: 200 OK
+    :raise: werkzeug.exceptions.NotAcceptable
+    """
+    global my_cart
+    if my_cart is None:
+        abort(406, "The shopping cart is already closed!")
+
+    del my_cart
+    my_cart = None
+
+    return make_response("Deleted the shopping cart", 200)
+
+
+def remove_from_cart(itemname):
+    """
+    Reduce the quantity of the named item in Cart by 1. Get a 404 if the item doesn't
+    exist in the shop. Get a 406 if the item isn't in the Cart or the Cart's not open.
+
+    :param itemname: The item to look for and reduce quantity by 1.
+    :type itemname: str
+    :return: 200 OK
+    :raise: werkzeug.exceptions.NotFound
+            werkzeug.exceptions.NotAcceptable
+    """
+    if my_cart is None:
+        abort(406, "There's no shopping cart open!")
+
+    try:
+        shop.MY_SHOP.get(itemname)
+        my_cart.remove(itemname)
+    except KeyError:
+        abort(404, "The requested item doesn't exist in the shop!")
+    except NameError:
+        abort(406, "The requested item isn't in the shopping cart!")
+    return make_response("Removed 1 {} from the shopping cart".format(itemname), 200)
