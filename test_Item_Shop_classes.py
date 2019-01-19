@@ -165,4 +165,27 @@ class TestCart:
                 })
             )
 
-# TODO test viewing
+    def test_view(self):
+        c = Cart()
+        i1 = Item(DUMMY_ITEM)
+        i2 = Item({
+            'title': "Fork",
+            'price': Decimal('2.49'),
+            'inventory_count': 10
+        })
+        c.add(i1)
+        c.add(i1)
+        c.add(i2)
+        cartstruct = c.view()
+        assert cartstruct['total'] == Decimal('4.49')
+        assert cartstruct['items'] == [
+            {'product': i1.dict(), 'quantity': 2},
+            {'product': i2.dict(), 'quantity': 1}
+        ]
+
+    def test_view_empty(self):
+        c = Cart()
+        assert c.view() == {
+            'total': Decimal('0'),
+            'items': []
+        }

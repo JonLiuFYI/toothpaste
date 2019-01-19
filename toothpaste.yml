@@ -134,27 +134,32 @@ paths:
           description: Failed to add. Not enough stock to add another to the cart.
   /cart/view/:
     get:
-      operationId: cart.view
+      operationId: cart.view_cart
       tags:
         - Purchasing
-      summary: View the contents of the shopping cart
+      summary: View the contents and price of the shopping cart
       description: >
-        See the items in the shopping cart.
+        See the items in the shopping cart and the total cost.
       responses:
         200:
-          description: Successfully viewed the cart.
+          description: Successfully viewed cart data.
           schema:
             properties:
-              product:
-                type: object
+              total:
+                type: number
+              items:
+                type: array
                 properties:
-                  title:
-                    type: string
-                  price:
-                    type: number
-                  inventory_count:
+                  product:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      price:
+                        type: number
+                      inventory_count:
+                        type: integer
+                  quantity:
                     type: integer
-              quantity:
-                type: integer
-        404:
+        406:
           description: Lookup failed. The cart isn't open.

@@ -131,6 +131,7 @@ class Cart:
         if item.inventory_count == 0:
             raise ValueError("That item is out of stock")
         if item.title in self.names:
+            # TODO: ugly
             if self.items[self.names.index(item.title)]['quantity'] == item.inventory_count:
                 raise ValueError("Can't add more than there's available")
             self.items[self.names.index(item.title)]['quantity'] += 1
@@ -138,6 +139,27 @@ class Cart:
             self.names.append(item.title)
             self.items.append({'product': item, 'quantity': 1})
         self.total += item.price
+
+    def view(self):
+        """
+        Produce a list of items to buy and their buy quantity, as well as price total.
+
+        :return: A dict containing a price total and a list of dicts representing items
+        in Cart.
+            {
+                'total' : Decimal,
+                'items' : [
+                    {'product' : Item.dict(), 'quantity' : int}
+                ]
+            }
+        """
+        return {
+            'total': self.total,
+            'items': [{
+                'product': i['product'].dict(),
+                'quantity': i['quantity']
+            } for i in self.items]
+        }
 
     def __len__(self):
         return len(self.items)

@@ -47,23 +47,20 @@ def add_to_cart(itemname):
     return make_response("Added {} to the shopping cart".format(itemname), 200)
 
 
-# TODO: finish view after adding
-def view():
+def view_cart():
     """
-    Produce the contents of the Cart. Get a 404 if there's no Cart open.
+    Produce the contents of the Cart and its price total. Get a 406 if there's no Cart open.
 
-    :return: A list of dicts {product, quantity}. product is a dict {title, price,
-    inventory_count} and quantity is an int.
-    [
+    :return: A dict containing a price total and a list of dicts representing items in Cart.
         {
-        'product':
-            {
-            'title': str,
-            'price': Decimal,
-            'inventory_count': int
-            },
-        'quantity': int
+            'total' : Decimal,
+            'items' : [
+                {'product' : Item.dict(), 'quantity' : int}
+            ]
         }
-    ]
+    :raise: werkzeug.exceptions.NotAcceptable
     """
+    if my_cart is None:
+        abort(406, "The shopping cart hasn't been created yet!")
 
+    return my_cart.view()

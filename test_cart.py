@@ -28,7 +28,7 @@ CHACHALACA = {
 }
 
 
-class TestCart:
+class TestCartAPI:
     def test_create_cart_for_user(self):
         with f.app_context():
             cart.my_cart = None
@@ -60,3 +60,28 @@ class TestCart:
             cart.create()
             with pytest.raises(NotFound):
                 cart.add_to_cart('Noisy crow')
+
+    def test_view_cart(self):
+        with f.app_context():
+            cart.my_cart = None
+            cart.create()
+            assert cart.view_cart() == {
+                'total': Decimal('0'),
+                'items': []
+            }
+            cart.add_to_cart('Turtle dove')
+            cart.add_to_cart('Turtle dove')
+            cart.add_to_cart('French hen')
+            assert cart.view_cart() == {
+                'total': Decimal('34.67'),
+                'items': [
+                    {'product': DOVE, 'quantity': 2},
+                    {'product': HEN, 'quantity': 1}
+                ]
+            }
+
+    def test_view_uninitialized_cart(self):
+        with f.app_context():
+            cart.my_cart = None
+            with pytest.raises(NotAcceptable):
+                cart.view_cart()
