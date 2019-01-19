@@ -23,7 +23,7 @@ def create():
     return make_response("Opened a shopping cart", 201)
 
 
-def add(itemname):
+def add_to_cart(itemname):
     """
     Add the named item to the Cart. Get a 404 if the item doesn't exist.
     Get a 406 if adding the item would go over available inventory.
@@ -34,11 +34,18 @@ def add(itemname):
     :raise: werkzeug.exceptions.NotFound
             werkzeug.exceptions.NotAcceptable
     """
-    item = shop.MY_SHOP.get(itemname)
+    if my_cart is None:
+        abort(406, "The shopping cart hasn't been created yet!")
+
     try:
+        item = shop.MY_SHOP.get(itemname)
         my_cart.add(item)
     except ValueError:
         abort(406, "Can't add more than the available quantity!")
+    except KeyError:
+        abort(404, "The requested item doesn't exist in the shop!")
+    return make_response("Added {} to the shopping cart".format(itemname), 200)
+
 
 # TODO: finish view after adding
 def view():

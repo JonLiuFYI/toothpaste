@@ -128,6 +128,8 @@ class Cart:
         :return: None
         :raise: ValueError
         """
+        if item.inventory_count == 0:
+            raise ValueError("That item is out of stock")
         if item.title in self.names:
             if self.items[self.names.index(item.title)]['quantity'] == item.inventory_count:
                 raise ValueError("Can't add more than there's available")

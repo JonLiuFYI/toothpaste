@@ -154,4 +154,15 @@ class TestCart:
         with pytest.raises(ValueError):
             c.add(i2)
 
-# test viewing
+    def test_add_out_of_stock(self):
+        c = Cart()
+        with pytest.raises(ValueError):
+            c.add(
+                Item({
+                    'title': "Arid Mesa",
+                    'price': Decimal('50.00'),
+                    'inventory_count': 0
+                })
+            )
+
+# TODO test viewing

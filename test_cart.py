@@ -42,18 +42,21 @@ class TestCart:
         with f.app_context():
             cart.my_cart = None
             cart.create()
-            cart.add('French hen')
-            cart.add('French hen')
-            cart.add('Turtle dove')
+            cart.add_to_cart('French hen')
+            cart.add_to_cart('French hen')
+            cart.add_to_cart('Turtle dove')
             assert cart.my_cart.items == [
                 {'product': HEN, 'quantity': 2},
                 {'product': DOVE, 'quantity': 1}
             ]
 
-            cart.add('French hen')
+            cart.add_to_cart('French hen')
             with pytest.raises(NotAcceptable):
-                cart.add('French hen')
+                cart.add_to_cart('French hen')
 
-    # TODO
-    # add fake item to cart
-    # test item not found
+    def test_add_unknown_item(self):
+        with f.app_context():
+            cart.my_cart = None
+            cart.create()
+            with pytest.raises(NotFound):
+                cart.add_to_cart('Noisy crow')
