@@ -105,3 +105,33 @@ def remove_from_cart(itemname):
     except NameError:
         abort(406, "The requested item isn't in the shopping cart!")
     return make_response("Removed 1 {} from the shopping cart".format(itemname), 200)
+
+
+def checkout_cart():
+    """
+    Check that each item in the Cart isn't exceeding available stock in the Shop. If so,
+    buy every item from the shop at the requested quantities, then close the cart.
+    Otherwise, get a 406 if the Cart contains too many of an item or the Cart's not open.
+
+    :return: 200 OK
+    :raise: werkzeug.exceptions.NotAcceptable
+    """
+    global my_cart
+
+    if my_cart is None:
+        abort(406, "There's no shopping cart open!")
+
+    for i in my_cart.items:
+        itemname = i['product'].title
+        shopitem = shop.MY_SHOP.get(itemname)
+        if i['quantity'] > shopitem.inventory_count:
+            abort(406, "Not enough items in stock to fulfill cart checkout!")
+
+    for i in my_cart.items:
+        for _ in range(i['quantity']):
+            shop.buy(i['product'].title)
+
+    checkout_total = my_cart.total
+    del my_cart
+    my_cart = None
+    return make_response("Checkout complete: ${} purchased.".format(checkout_total), 200)

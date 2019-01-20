@@ -149,3 +149,42 @@ class TestCartAPI:
             cart.my_cart = None
             with pytest.raises(NotAcceptable):
                 cart.remove_from_cart('Turtle dove')
+
+    def test_checkout_cart(self):
+        with f.app_context():
+            cart.my_cart = None
+            cart.create()
+
+            cart.add_to_cart('Turtle dove')
+            cart.add_to_cart('French hen')
+            cart.checkout_cart()
+            assert cart.my_cart is None
+
+    def test_checkout_empty_cart(self):
+        with f.app_context():
+            cart.my_cart = None
+            cart.create()
+
+            cart.checkout_cart()
+            assert cart.my_cart is None
+
+    def test_checkout_unopened_cart(self):
+        with f.app_context():
+            cart.my_cart = None
+            with pytest.raises(NotAcceptable):
+                cart.checkout_cart()
+
+    def test_checkout_over_stock_cart(self):
+        with f.app_context():
+            cart.my_cart = None
+            cart.create()
+
+            # let's exploit how Carts are implemented!
+            cart.my_cart.add(Item({
+                'title': "Chachalaca",
+                'price': Decimal('3.50'),
+                'inventory_count': 999  # fake inventory_count fools the quantity check
+            }))
+
+            with pytest.raises(NotAcceptable):
+                cart.checkout_cart()

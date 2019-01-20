@@ -96,7 +96,7 @@ paths:
           description: Purchase failed. The named product doesn't exist in the shop.
         406:
           description: Purchase failed. The named product is out of stock.
-  /cart/create/:
+  /cart/create:
     post:
       operationId: cart.create
       tags:
@@ -183,7 +183,7 @@ paths:
       operationId: cart.remove_from_cart
       tags:
         - Purchasing
-      summary: Have 1 less of the named item in the shopping cart.
+      summary: Subtract 1 of the named item from the shopping cart.
       description: >
         Remove 1 of the named item. Get a 404 if the item doesn't exist in the shop.
         Get a 406 is the item isn't in the cart.
@@ -200,3 +200,19 @@ paths:
           description: Failed to remove. Item doesn't exist.
         406:
           description: Failed to remove. Item isn't in the cart or the cart's not open.
+  /cart/checkout:
+    put:
+      operationId: cart.checkout_cart
+      tags:
+        - Purchasing
+      summary: Buy everything in the cart.
+      description: >
+        Buy each item in the cart for its requested quantity. Only buy if there are no
+        inventory issues. The cart will be closed and the shop's inventory will be reduced.
+        Get a 406 if the cart's not open or an item's requested quantity exceeds available
+        stock.
+      responses:
+        200:
+          description: Successfully purchased every item in the cart from the shop.
+        406:
+          description: Failed to purchase. An item is over stock or the cart's not open.
