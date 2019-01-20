@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
-from decimal import *
 from flask import make_response, abort
-from Item_Shop_classes import Shop, Item, Cart
+
 import shop
+from Item_Shop_classes import Cart
 
 my_cart = None
 

@@ -2,7 +2,7 @@
 
 from decimal import *
 import shop
-from Item_Shop_classes import Shop, Item
+from Item_Shop_classes import Shop
 import pytest
 from werkzeug.exceptions import NotFound, NotAcceptable
 

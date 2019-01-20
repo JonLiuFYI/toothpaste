@@ -2,7 +2,7 @@
 
 from decimal import *
 import cart
-from Item_Shop_classes import Shop, Item, Cart
+from Item_Shop_classes import Item
 import pytest
 from werkzeug.exceptions import NotFound, NotAcceptable
 import flask
@@ -28,7 +28,7 @@ CHACHALACA = {
 }
 
 
-class TestCartAPI:
+class TestCreateCart:
     def test_create_cart_for_user(self):
         with f.app_context():
             cart.my_cart = None
@@ -38,6 +38,8 @@ class TestCartAPI:
             with pytest.raises(NotAcceptable):
                 cart.create()
 
+
+class TestAddToCart:
     def test_add(self):
         with f.app_context():
             cart.my_cart = None
@@ -61,6 +63,8 @@ class TestCartAPI:
             with pytest.raises(NotFound):
                 cart.add_to_cart('Noisy crow')
 
+
+class TestViewCart:
     def test_view_cart(self):
         with f.app_context():
             cart.my_cart = None
@@ -86,6 +90,8 @@ class TestCartAPI:
             with pytest.raises(NotAcceptable):
                 cart.view_cart()
 
+
+class TestCloseCart:
     def test_close_cart(self):
         with f.app_context():
             cart.my_cart = None
@@ -102,6 +108,8 @@ class TestCartAPI:
             cart.create()
             assert cart.my_cart is not None
 
+
+class TestRemoveFromCart:
     def test_remove_items(self):
         with f.app_context():
             cart.my_cart = None
@@ -150,6 +158,8 @@ class TestCartAPI:
             with pytest.raises(NotAcceptable):
                 cart.remove_from_cart('Turtle dove')
 
+
+class TestCheckoutCart:
     def test_checkout_cart(self):
         with f.app_context():
             cart.my_cart = None

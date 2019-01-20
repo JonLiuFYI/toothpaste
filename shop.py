@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 from decimal import *
-from flask import make_response, abort
-from Item_Shop_classes import Shop, Item
+from flask import abort
+from Item_Shop_classes import Shop
 
 # this would be from a database
 fake_db = [
